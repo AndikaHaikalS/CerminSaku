@@ -1,20 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* ===== ROOT ===== */
+/*  ROOT  */
 :root {
   --primary: #0E4834;
   --secondary: #20624A;
   --accent: #0F7853;
 
-  --bg: rgba(255, 255, 255, 0.92);
+  --bg: #ffffffeb;
   --text: #173D30;
   --muted: #809088;
   --border: #E8F0EB;
 
-  --hover: rgba(15, 120, 83, 0.06);
+  --hover: #0f78530f;
 }
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR*/
 
 .sidebar {
   width: 255px;
@@ -24,11 +24,11 @@
   top: 0;
   left: 0;
 
-  background: rgba(255,255,255,0.9);
+  background: #ffffffe6;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 
-  border-right: 1px solid rgba(15,120,83,.08);
+  border-right: 1px solid #0f785314;
 
   display: flex;
   flex-direction: column;
@@ -40,7 +40,7 @@
     width .55s cubic-bezier(.22,1,.36,1);
 
   box-shadow:
-    12px 0 40px rgba(14,72,52,.04);
+    12px 0 40px #0e48340a;
 
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
@@ -49,7 +49,7 @@
   width: 84px;
 }
 
-/* ===== LOGO ===== */
+/* LOGO*/
 
 .logo {
   padding: 24px 18px 12px;
@@ -67,8 +67,8 @@
   background:
     linear-gradient(
       135deg,
-      rgba(14,72,52,.06),
-      rgba(15,120,83,.08)
+      #0e48340f,
+      #0f785314
     );
 
   overflow: hidden;
@@ -87,7 +87,7 @@
   object-fit: contain;
 }
 
-/* ===== MENU ===== */
+/* MENU */
 
 .menu {
   flex: 1;
@@ -100,11 +100,11 @@
 }
 
 .menu::-webkit-scrollbar-thumb {
-  background: rgba(15,120,83,.25);
+  background: #0f785340;
   border-radius: 999px;
 }
 
-/* ===== SECTION ===== */
+/* SECTION */
 
 .section {
   font-size: 11px;
@@ -115,7 +115,7 @@
   margin: 20px 12px 10px;
 }
 
-/* ===== NAV ITEM ===== */
+/* NAV ITEM */
 
 .item {
   position: relative;
@@ -152,7 +152,7 @@
     linear-gradient(
       120deg,
       transparent 30%,
-      rgba(255,255,255,.12) 50%,
+      #ffffff1f 50%,
       transparent 70%
     );
 
@@ -166,7 +166,7 @@
 }
 
 .item:hover {
-  background: rgba(15,120,83,.045);
+  background: #0f78530b;
 
   color: var(--accent);
 
@@ -175,7 +175,7 @@
     scale(1.008);
 
   box-shadow:
-    inset 0 0 0 1px rgba(15,120,83,.025);
+    inset 0 0 0 1px #0f785306;
 }
 
 .item:active {
@@ -183,10 +183,10 @@
   transition: .18s ease;
 }
 
-/* ===== HOVER ===== */
+/* HOVER */
 
 .item:hover {
-  background: rgba(15,120,83,.055);
+  background: #0f78530e;
   color: var(--accent);
 
   transform:
@@ -197,21 +197,21 @@
     inset 0 0 0 1px rgba(15,120,83,.03);
 }
 
-/* ===== ACTIVE ===== */
+/* ACTIVE */
 
 .item.active {
   background:
     linear-gradient(
       135deg,
-      rgba(14,72,52,.95),
-      rgba(32,98,74,.95),
-      rgba(15,120,83,.95)
+      #0e4834f2,
+      #20624af2,
+      #0f7853f2
     );
 
   color: white;
 
   box-shadow:
-    0 10px 30px rgba(15,120,83,.12);
+    0 10px 30px #0f78531f;
 
   transform: scale(1);
 
@@ -228,7 +228,7 @@
     box-shadow;
 }
 
-/* ===== BADGE ===== */
+/* BADGE */
 
 .badge {
   margin-left: auto;
@@ -249,7 +249,7 @@
   font-weight: 700;
 }
 
-/* ===== USER ===== */
+/* USER */
 
 .user {
   margin: 14px;
@@ -260,8 +260,8 @@
   background:
     linear-gradient(
       135deg,
-      rgba(14,72,52,.05),
-      rgba(15,120,83,.08)
+      #0e48340d,
+      #0f785314
     );
 
   display: flex;
@@ -279,8 +279,8 @@
   background:
     linear-gradient(
       135deg,
-      rgba(14,72,52,.07),
-      rgba(15,120,83,.10)
+      #0e483412,
+      #0f78531a
     );
 }
 
@@ -321,7 +321,7 @@
   color: var(--muted);
 }
 
-/* ===== LOGOUT ===== */
+/* LOGOUT  */
 
 .logout {
   margin-left: auto;
@@ -338,7 +338,7 @@
   transform: scale(1.08);
 }
 
-/* ===== TOGGLE ===== */
+/* TOGGLE */
 
 .toggle {
   position: absolute;
@@ -364,7 +364,7 @@
   cursor: pointer;
 
   box-shadow:
-    0 10px 26px rgba(15,120,83,.14);
+    0 10px 26px #0f785324;
 
   transition:
     transform .6s cubic-bezier(.16,1,.3,1),
@@ -386,7 +386,7 @@
     scale(.95);
 }
 
-/* ===== ULTRA SMOOTH TRANSITION ===== */
+/* ULTRA SMOOTH TRANSITION */
 
 .card,
 .how-card,
@@ -426,7 +426,7 @@
   transform: translateY(-2px) scale(1.015);
 }
 
-/* ===== COLLAPSED ===== */
+/* COLLAPSED */
 
 .sidebar.collapsed .section,
 .sidebar.collapsed .user-info,
@@ -447,7 +447,7 @@
   display: none;
 }
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .sidebar {
