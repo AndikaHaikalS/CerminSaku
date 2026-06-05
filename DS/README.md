@@ -1,16 +1,18 @@
-📊 CerminSaku - Data Science Project
-📌 Overview
+# 📊 CerminSaku - Data Science Project
+
+## 📌 Overview
 
 CerminSaku adalah project data science yang bertujuan untuk menganalisis data keuangan pribadi dan membantu pengguna memahami pola pengeluaran serta kebiasaan finansial mereka. Project ini fokus pada eksplorasi data, data cleaning, hingga visualisasi dalam bentuk dashboard interaktif.
 ---
-🛠️ Tech Stack
+## 🛠️ Tech Stack
+
 Python
 Pandas
 NumPy
 Matplotlib / Seaborn
 Streamlit
 ---
-📂 Project Structure
+## 📂 Project Structure
 ```
 DS/
 ├── notebook.ipynb                                # Business questions, assessing data, cleaning data, EDA, feature engineering, visualisasi
@@ -26,7 +28,7 @@ DS/
 ```
 
 ---
-🔍 Workflow
+## 🔍 Workflow
 1. Data Collection
    * Menggunakan dataset keuangan yang diperoleg dari platform kaggle
 3. Data Cleaning
@@ -41,7 +43,7 @@ DS/
    * Dibuat menggunakan Streamlit
    * Menyajikan insight secara interaktif
 ---
-🚀 How to Run Dashboard
+## 🚀 How to Run Dashboard
 1. Masuk ke folder:
 ```
 cd "dashboard streamlit"
@@ -55,6 +57,6 @@ pip install -r requirements.txt
 streamlit run dashboard.py
 ```
 ---
-🌐 Deployment
+## 🌐 Deployment
 
 Link dashboard bisa dilihat di file: [URL dashboard streamlit cloud.txt](https://github.com/AndikaHaikalS/CerminSaku/blob/main/DS/dashboard%20streamlit/URL%20dashboard%20streamlit%20cloud.txt)
