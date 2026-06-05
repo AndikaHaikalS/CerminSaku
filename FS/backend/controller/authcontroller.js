@@ -2,6 +2,8 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
+const jwt = require("jsonwebtoken");
+
 console.log(
   "MAIL_USER:",
   process.env.MAIL_USER
@@ -28,7 +30,6 @@ const register = async (req, res) => {
     const { name, email, password } =
       req.body;
 
-    // cek email sudah ada
     const userExist =
       await pool.query(
         'SELECT * FROM users WHERE email = $1',
@@ -45,7 +46,6 @@ const register = async (req, res) => {
       });
     }
 
-    // hash password
     const salt =
       await bcrypt.genSalt(10);
 
@@ -65,14 +65,12 @@ const register = async (req, res) => {
         specialChars: false
       });
 
-    // expired 5 menit
     const otpExpired =
       new Date(
         Date.now() +
         5 * 60 * 1000
       );
 
-    // simpan user
     await pool.query(
       `
       INSERT INTO users
@@ -307,19 +305,42 @@ const login = async (
       });
     }
 
-    res.status(200).json({
-      success: true,
-      message:
-        'Login berhasil!',
-      data: {
-        id:
-          user.rows[0].id,
-        name:
-          user.rows[0].name,
-        email:
-          user.rows[0].email
-      }
-    });
+const token = jwt.sign(
+  {
+    id:
+      user.rows[0].id,
+
+    email:
+      user.rows[0].email
+  },
+
+  process.env.JWT_SECRET,
+
+  {
+    expiresIn:
+      "7d"
+  }
+);
+
+res.status(200).json({
+  success: true,
+
+  message:
+    "Login berhasil!",
+
+  token,
+
+  data: {
+    id:
+      user.rows[0].id,
+
+    name:
+      user.rows[0].name,
+
+    email:
+      user.rows[0].email
+  }
+});
 
   } catch (error) {
     console.error(error);
@@ -330,6 +351,132 @@ const login = async (
         'Terjadi kesalahan server'
     });
   }
+};
+// KIRIM OTP RESET PASSWORD
+const sendResetOtp =
+  async (req, res) => {
+
+    try {
+
+      const { email } =
+        req.body;
+
+      const user =
+        await pool.query(
+          `
+          SELECT *
+          FROM users
+          WHERE email = $1
+          `,
+          [email]
+        );
+
+      if (
+        user.rows.length === 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Email tidak ditemukan!"
+        });
+      }
+
+      const otp =
+        otpGenerator.generate(
+          6,
+          {
+            upperCaseAlphabets:
+              false,
+
+            lowerCaseAlphabets:
+              false,
+
+            specialChars:
+              false
+          }
+        );
+
+      const otpExpired =
+        new Date(
+          Date.now() +
+          5 * 60 * 1000
+        );
+
+      await pool.query(
+        `
+        UPDATE users
+        SET
+        otp = $1,
+        otp_expired_at = $2
+        WHERE email = $3
+        `,
+        [
+          otp,
+          otpExpired,
+          email
+        ]
+      );
+
+      // KIRIM EMAIL
+      await transporter.sendMail({
+        from:
+          `"CerminSaku" <${process.env.MAIL_USER}>`,
+
+        to: email,
+
+        subject:
+          "Reset Password CerminSaku",
+
+        html: `
+        <div style="
+          font-family:Arial;
+          padding:24px;
+          background:#f8fafc;
+        ">
+          <h2 style="
+            color:#10B981;
+          ">
+            Reset Password
+          </h2>
+
+          <p>
+            Gunakan kode OTP berikut:
+          </p>
+
+          <div style="
+            font-size:32px;
+            font-weight:bold;
+            letter-spacing:8px;
+            color:#10B981;
+            margin:24px 0;
+          ">
+            ${otp}
+          </div>
+
+          <p>
+            OTP berlaku
+            <b>5 menit</b>
+          </p>
+        </div>
+        `
+      });
+
+      res.status(200).json({
+        success: true,
+        message:
+          "OTP berhasil dikirim!"
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Terjadi kesalahan server"
+      });
+    }
 };
 
 // RESET PASSWORD
@@ -399,9 +546,87 @@ const resetPassword =
     }
 };
 
+// VERIFY OTP RESET PASSWORD
+const verifyResetOtp =
+  async (req, res) => {
+
+    try {
+
+      const {
+        email,
+        otp
+      } = req.body;
+
+      const user =
+        await pool.query(
+          `
+          SELECT *
+          FROM users
+          WHERE email = $1
+          `,
+          [email]
+        );
+
+      if (
+        user.rows.length === 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "User tidak ditemukan!"
+        });
+      }
+
+      const userData =
+        user.rows[0];
+
+      if (
+        userData.otp !== otp
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "OTP salah!"
+        });
+      }
+
+      if (
+        new Date() >
+        new Date(
+          userData
+          .otp_expired_at
+        )
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "OTP expired!"
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message:
+          "OTP valid!"
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Server error"
+      });
+    }
+};
+
 module.exports = {
   register,
   verifyOtp,
   login,
+  sendResetOtp,
+  verifyResetOtp,
   resetPassword
 };

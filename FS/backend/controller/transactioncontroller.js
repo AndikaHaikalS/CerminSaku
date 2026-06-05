@@ -1,9 +1,13 @@
 const pool = require('../config/db');
 
-// 1. GET: Ambil transaksi berdasarkan user login
+// 1. GET
 const getTransactions = async (req, res) => {
   try {
     const { userId } = req.query;
+    console.log(
+      "USER ID SUMMARY:",
+      userId
+    );
 
     const result = await pool.query(
       'SELECT * FROM transactions WHERE user_id = $1 ORDER BY id DESC',
@@ -23,7 +27,7 @@ const getTransactions = async (req, res) => {
   }
 };
 
-// 2. POST: Tambah transaksi baru
+// 2. POST
 const createTransaction = async (req, res) => {
   try {
     const {
@@ -65,7 +69,7 @@ const createTransaction = async (req, res) => {
   }
 };
 
-// 3. PUT: Update transaksi milik user
+// 3. PUT
 const updateTransaction = async (req, res) => {
   try {
     const { id } = req.params;
@@ -115,7 +119,7 @@ const updateTransaction = async (req, res) => {
   }
 };
 
-// 4. DELETE: Hapus transaksi milik user
+// 4. DELETE
 const deleteTransaction = async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,8 +143,83 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
+const getSummary = async (
+  req,
+  res
+) => {
+  try {
+
+    const { userId } =
+      req.query;
+
+    const result =
+      await pool.query(
+        `
+        SELECT
+          COALESCE(
+            SUM(amount)
+            FILTER (
+              WHERE type = 'income'
+            ),
+            0
+          ) AS income,
+
+          COALESCE(
+            SUM(amount)
+            FILTER (
+              WHERE type = 'expense'
+            ),
+            0
+          ) AS expense
+
+        FROM transactions
+        WHERE user_id = $1
+        `,
+        [userId]
+      );
+
+    const income =
+      Number(
+        result.rows[0]
+        .income
+      );
+
+    const expense =
+      Number(
+        result.rows[0]
+        .expense
+      );
+
+    res.json({
+      success: true,
+
+      totalIncome:
+        income,
+
+      totalExpense:
+        expense,
+
+      netSurplus:
+        income -
+        expense,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+      "Gagal ambil summary",
+    });
+  }
+};
+
 module.exports = {
   getTransactions,
+    getSummary,
+
   createTransaction,
   updateTransaction,
   deleteTransaction,

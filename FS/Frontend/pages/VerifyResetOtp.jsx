@@ -2,10 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
+  ShieldCheck,
   CheckCircle,
   AlertCircle
 } from "lucide-react";
@@ -13,25 +10,19 @@ import {
 import logo from "../asset/logo.png";
 import "../style/login.css";
 
-export default function ForgotPassword() {
+export default function VerifyResetOtp() {
 
   const navigate =
     useNavigate();
 
-  const [email, setEmail] =
+  const [otp, setOtp] =
     useState("");
 
-  const [
-    newPassword,
-    setNewPassword
-  ] = useState("");
+  const email =
+    localStorage.getItem(
+      "resetEmail"
+    );
 
-  const [
-    showPassword,
-    setShowPassword
-  ] = useState(false);
-
-  // TOAST STATE
   const [toast, setToast] =
     useState({
       show: false,
@@ -39,7 +30,6 @@ export default function ForgotPassword() {
       type: "success"
     });
 
-  // TOAST FUNCTION
   const showToast = (
     message,
     type = "success"
@@ -59,18 +49,16 @@ export default function ForgotPassword() {
     }, 2500);
   };
 
-  // RESET PASSWORD
-  const handleReset =
+  const handleVerifyOtp =
     async () => {
 
-    if (
-      !email ||
-      !newPassword
-    ) {
+    if (!otp) {
+
       showToast(
-        "Isi email dan password baru!",
+        "Masukkan kode OTP!",
         "error"
       );
+
       return;
     }
 
@@ -78,7 +66,7 @@ export default function ForgotPassword() {
 
       const response =
         await fetch(
-          "http://localhost:3000/api/auth/reset-password",
+          "http://localhost:3000/api/auth/verify-reset-otp",
           {
             method: "POST",
 
@@ -90,7 +78,7 @@ export default function ForgotPassword() {
             body:
               JSON.stringify({
                 email,
-                newPassword
+                otp
               })
           }
         );
@@ -98,29 +86,33 @@ export default function ForgotPassword() {
       const data =
         await response.json();
 
-      if (data.success) {
+      if (
+        data.success
+      ) {
 
         showToast(
-          "Password berhasil diperbarui!",
+          "OTP berhasil diverifikasi!",
           "success"
         );
 
         setTimeout(() => {
-          navigate("/login");
-        }, 1500);
+
+          navigate(
+            "/new-password"
+          );
+
+        }, 1200);
 
       } else {
 
         showToast(
           data.message ||
-          "Gagal mengubah password.",
+          "OTP tidak valid!",
           "error"
         );
       }
 
-    } catch (error) {
-
-      console.error(error);
+    } catch {
 
       showToast(
         "Terjadi kesalahan koneksi ke server.",
@@ -173,100 +165,44 @@ export default function ForgotPassword() {
         <div className="login-logo">
           <img
             src={logo}
-            alt="CerminSaku Logo"
+            alt="logo"
           />
         </div>
 
         <div className="login-card">
 
           <h2>
-            Lupa Password
+            Verifikasi OTP
           </h2>
 
           <p className="sub">
-            Masukkan email
-            terdaftar dan buat
-            password baru
+            Masukkan kode OTP
+            yang dikirim ke email
+            kamu
           </p>
 
-          {/* EMAIL */}
           <div className="login-field-group">
 
             <label>
-              Email
+              Kode OTP
             </label>
 
             <div className="input-box">
 
-              <Mail
+              <ShieldCheck
                 size={16}
               />
 
               <input
-                type="email"
-                placeholder="email@domain.com"
-                value={email}
+                type="text"
+                placeholder="123456"
+                value={otp}
                 onChange={(e) =>
-                  setEmail(
+                  setOtp(
                     e.target.value
                   )
                 }
               />
-
-            </div>
-          </div>
-
-          {/* PASSWORD */}
-          <div className="login-field-group">
-
-            <label>
-              Password Baru
-            </label>
-
-            <div className="input-box">
-
-              <Lock
-                size={16}
-              />
-
-              <input
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
-                placeholder="Masukkan password baru"
-                value={
-                  newPassword
-                }
-                onChange={(e) =>
-                  setNewPassword(
-                    e.target.value
-                  )
-                }
-              />
-
-              {showPassword ? (
-                <Eye
-                  size={18}
-                  className="eye"
-                  onClick={() =>
-                    setShowPassword(
-                      false
-                    )
-                  }
-                />
-              ) : (
-                <EyeOff
-                  size={18}
-                  className="eye"
-                  onClick={() =>
-                    setShowPassword(
-                      true
-                    )
-                  }
-                />
-              )}
 
             </div>
           </div>
@@ -274,15 +210,15 @@ export default function ForgotPassword() {
           <button
             className="login-btn"
             onClick={
-              handleReset
+              handleVerifyOtp
             }
           >
-            Perbarui Password
+            Verifikasi OTP
           </button>
 
           <p className="bottom-text">
 
-            Ingat password?
+            Kembali ke
 
             <span
               onClick={() =>
@@ -292,7 +228,7 @@ export default function ForgotPassword() {
               }
             >
               {" "}
-              Kembali Masuk
+              Login
             </span>
 
           </p>
