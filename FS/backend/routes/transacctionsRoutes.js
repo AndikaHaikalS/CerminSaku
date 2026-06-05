@@ -1,16 +1,48 @@
-const express = require('express');
-const router = express.Router();
+const express =
+require("express");
+
+const router =
+express.Router();
+
 const {
   getTransactions,
   createTransaction,
   updateTransaction,
   deleteTransaction,
-} = require('../controllers/transactionController');
+  getSummary,
+} = require(
+  "../controllers/transactionController"
+);
 
-// Mapping ke Controller
-router.get('/', getTransactions);
-router.post('/', createTransaction);
-router.put('/:id', updateTransaction);
-router.delete('/:id', deleteTransaction);
+// SUMMARY
+router.get(
+  "/summary",
+  getSummary
+);
 
-module.exports = router;
+// GET ALL
+router.get(
+  "/",
+  getTransactions
+);
+
+// CREATE
+router.post(
+  "/",
+  createTransaction
+);
+
+// UPDATE
+router.put(
+  "/:id",
+  updateTransaction
+);
+
+// DELETE
+router.delete(
+  "/:id",
+  deleteTransaction
+);
+
+module.exports =
+router;

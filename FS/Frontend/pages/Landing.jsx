@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import logo from "../asset/logo.png";
+import dashboardPreview from "../asset/Dashboard.png";
 import "../style/landing.css";
+
 import {
   Wallet,
   BarChart2,
@@ -11,6 +13,8 @@ import {
   PenLine,
   LineChart,
   Trophy,
+  Moon,
+  Sun,
   ArrowRight,
   ChevronRight,
   ArrowUp
@@ -18,6 +22,32 @@ import {
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(() => {
+  return localStorage.getItem("landing_theme") === "dark";
+});
+
+useEffect(() => {
+  if (darkMode) {
+    document.documentElement.setAttribute(
+      "data-theme",
+      "dark"
+    );
+
+    localStorage.setItem(
+      "landing_theme",
+      "dark"
+    );
+  } else {
+    document.documentElement.removeAttribute(
+      "data-theme"
+    );
+
+    localStorage.setItem(
+      "landing_theme",
+      "light"
+    );
+  }
+}, [darkMode]);
 
   useEffect(() => {
     const els = document.querySelectorAll(
@@ -65,10 +95,35 @@ export default function Landing() {
         </div>
 
         <div className="nav-btn">
-          <button className="nav-btn-outline" onClick={() => navigate("/login")}>
+
+          <button
+            className="theme-toggle-btn"
+            onClick={() =>
+              setDarkMode(!darkMode)
+            }
+          >
+            {darkMode ? (
+              <Sun size={18} />
+            ) : (
+              <Moon size={18} />
+            )}
+          </button>
+
+          <button
+            className="nav-btn-outline"
+            onClick={() =>
+              navigate("/login")
+            }
+          >
             Masuk
           </button>
-          <button className="nav-btn-primary" onClick={() => navigate("/register")}>
+
+          <button
+            className="nav-btn-primary"
+            onClick={() =>
+              navigate("/register")
+            }
+          >
             Daftar Gratis
           </button>
         </div>
@@ -122,13 +177,17 @@ export default function Landing() {
           <div className="dashboard-placeholder-wrapper">
             <div className="dashboard-placeholder">
               <div className="placeholder-inner-glow"></div>
-              <p>Dashboard Preview</p>
+                <img
+                  src={dashboardPreview}
+                  alt="Dashboard Preview"
+                  className="dashboard-preview-image"
+                />
             </div>
           </div>
         </div>
       </section>
 
-      {/*  FITUR SECTION  */}
+      {/* FITUR SECTION */}
       <section id="fitur" className="fitur reveal">
         <p className="subtitle">SEMUA YANG KAMU BUTUHKAN</p>
         <h2>Fitur Lengkap,<br />Satu Platform</h2>
@@ -169,7 +228,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
+      {/*HOW IT WORKS */}
       <section id="cara-kerja" className="how-it-works reveal">
         <p className="subtitle">MUDAH DALAM 4 LANGKAH</p>
         <h2>Mulai dalam <br />Hitungan Menit</h2>
@@ -189,7 +248,6 @@ export default function Landing() {
 
           <div className="how-card reveal delay-200">
             <div className="how-num">02</div>
-            {/* KUNCI FIX: PenLine di baris ini sekarang berfungsi aman karena sudah di-import di atas! */}
             <div className="how-icon"><PenLine size={26} /></div>
             <h4>Catat Transaksi</h4>
             <p>Input pemasukan dan pengeluaran harian dengan cepat. Kategorikan otomatis atau manual.</p>
@@ -215,7 +273,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/*  DREAM SAVINGS  */}
+      {/*DREAM SAVINGS*/}
       <section id="tabungan" className="dream reveal">
         <div className="dream-container">
           <div className="dream-cards reveal-left">
@@ -279,7 +337,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA*/}
+      {/* CTA */}
       <section className="cta-final reveal">
         <div className="cta-box">
           <h2>Mulai Perjalanan<br />Keuanganmu Sekarang</h2>

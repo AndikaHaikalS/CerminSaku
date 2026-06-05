@@ -16,10 +16,24 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("isLogin")) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
+  console.log(
+    "CURRENT PATH:",
+    window.location.pathname
+  );
+
+  console.log(
+    "IS LOGIN:",
+    localStorage.getItem("isLogin")
+  );
+
+  if (
+    localStorage.getItem(
+      "isLogin"
+    )
+  ) {
+    navigate("/dashboard");
+  }
+}, [navigate]);
 
   const [showPassword, setShowPassword] =
     useState(false);
@@ -57,68 +71,103 @@ export default function Login() {
   };
 
   // LOGIN
-  const handleLogin = async () => {
-    if (!email || !password) {
-      showToast(
-        "Isi email dan password!",
-        "error"
-      );
-      return;
-    }
+  const handleLogin =
+async () => {
 
-    try {
-      const response = await fetch(
+  if (
+    !email ||
+    !password
+  ) {
+
+    showToast(
+      "Isi email dan password!",
+      "error"
+    );
+
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
         "http://localhost:3000/api/auth/login",
         {
           method: "POST",
+
           headers: {
             "Content-Type":
               "application/json"
           },
-          body: JSON.stringify({
-            email,
-            password
-          })
+
+          body:
+            JSON.stringify({
+              email,
+              password
+            })
         }
       );
 
-      const data =
-        await response.json();
+    const data =
+      await response.json();
 
-      if (data.success) {
+    if (
+      data.success
+    ) {
 
-        // simpan login
-        localStorage.setItem(
-          "isLogin",
-          "true"
-        );
+      localStorage.setItem(
+        "isLogin",
+        "true"
+      );
 
-        localStorage.setItem(
-          "userData",
-          JSON.stringify(data.data)
-        );
+      localStorage.setItem(
+        "token",
+        data.token
+      );
 
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1200);
-
-      } else {
-        showToast(
-          data.message ||
-            "Email atau password salah!",
-          "error"
-        );
-      }
-
-    } catch (error) {
-      console.error(error);
+      localStorage.setItem(
+        "userData",
+        JSON.stringify(
+          data.data
+        )
+      );
 
       showToast(
-        "Terjadi kesalahan koneksi ke server.",
+        "Login berhasil!",
+        "success"
+      );
+
+      setTimeout(() => {
+
+        navigate(
+          "/dashboard"
+        );
+
+      }, 1200);
+
+    } else {
+
+      showToast(
+        data.message ||
+        "Email atau password salah!",
         "error"
       );
     }
-  };
+
+  } catch (
+    error
+  ) {
+
+    console.error(
+      error
+    );
+
+    showToast(
+      "Terjadi kesalahan koneksi ke server.",
+      "error"
+    );
+  }
+};
 
   return (
     <div className="login-page">
@@ -204,11 +253,15 @@ export default function Login() {
 
               <span
                 className="forgot"
-                onClick={() =>
+                onClick={() => {
+                  console.log(
+                    "CLICK FORGOT"
+                  );
+
                   navigate(
                     "/forgot-password"
-                  )
-                }
+                  );
+                }}
               >
                 Lupa Password?
               </span>
